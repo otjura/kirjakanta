@@ -1,7 +1,15 @@
-(ns kirjakanta.core
-  (:gen-class))
+(ns kirjakanta.core 
+  (:gen-class)
+  (:import (javax.sql ConnectionEvent RowSetEvent StatementEvent))
+  (:require [clojure.java.jdbc :as jdbc]))
 
-(defn -main
-  "I don't do a whole lot ... yet."
-  [& args]
-  (println "Hello, World!"))
+(def database {:classname "org.sqlite.JDBC"
+               :subprotocol "sqlite"
+               :subname ".db"})
+
+(defstruct book :title :author :year)
+
+(defn -main [& args]
+  ())
+
+
