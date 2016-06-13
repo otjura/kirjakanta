@@ -5,7 +5,8 @@
             :url "https://opensource.org/licenses/MIT"}
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/java.jdbc "0.6.1"]
-                 [org.xerial/sqlite-jdbc "3.8.11.2"]]
+                 [org.xerial/sqlite-jdbc "3.8.11.2"]
+                 [seesaw "1.4.6-SNAPSHOT"]]
   :main ^:skip-aot kirjakanta.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
