@@ -1,9 +1,9 @@
 (ns kirjakanta.core 
   (:gen-class)
-  (:import [javax.sql ConnectionEvent RowSetEvent StatementEvent]
-           [javax.swing JFrame JPanel JLabel JButton])
   (:require [clojure.java.io :as io]
-            [clojure.java.jdbc :as sql]))
+            [clojure.java.jdbc :as sql]
+            [clojure.string :as st]
+            [kirjakanta.ui :as ui]))
 
 (defstruct book :id :title :author :year)
 
@@ -16,11 +16,11 @@
                                          [:author :text]
                                          [:year :text]]))
 
-(def query-all "SELECT * FROM books")
-(def query-ids "SELECT id FROM books")
-(def query-titles "SELECT title FROM books")
-(def query-authors "SELECT author FROM books")
-(def query-years "SELECT year FROM books")
+(def allq "SELECT * FROM books")
+(def idsq "SELECT id FROM books")
+(def titlesq "SELECT title FROM books")
+(def authorsq "SELECT author FROM books")
+(def yearsq "SELECT year FROM books")
 
 (defn initialize-database
   []
@@ -53,7 +53,14 @@
   [id]
   (sql/delete! db :books ["id = ?" id]))
 
+(defn pprint-sql
+  [query]
+  (let [tmp (map (fn [x] (st/replace (str x) #"[{}:\"]" "")) query)]
+    (let [tmp2 (map (fn [x] (st/replace x #"id {1,}[0-9], " "")) tmp)]
+      (st/join "\n" tmp2))))
+  
 
-
-(defn -main [& args]
-  (initialize-database))
+(defn -main
+  [& args]
+  (initialize-database)
+  (ui/kantaview))
