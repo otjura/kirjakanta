@@ -22,18 +22,16 @@
 (def authorsq "SELECT author FROM books")
 (def yearsq "SELECT year FROM books")
 
-(defn initialize-database
-  []
+(defn initialize-database []
   (if-not (first (map #(.exists (io/as-file %)) '("./kirjakanta.db")))
     (do (sql/execute! db [books-table])
         (println "Luotiin uusi kirjatietokanta."))
     (do (println "Tietokanta on olemassa."))))
 
-(defn query
-  [query]
+(defn query [query]
   (sql/query db query))
 
-(defn add-entry
+(defn add-entry ; overloaded
   ([title author year]
    (sql/insert! db :books {:title title :author author :year year}))
   ([title author]
@@ -41,26 +39,21 @@
   ([title]
    (sql/insert! db :books {:title title})))
 
-(defn edit-entry
-  [id what new-value]
+(defn edit-entry [id what new-value]
   (case what
     "title" (sql/update! db :books {:id id :title new-value})
     "author" (sql/update! db :books {:id id :author new-value})
     "year" (sql/update! db :books {:id id :year new-value})
     "Ei ole olemassa."))
 
-(defn delete-entry
-  [id]
+(defn delete-entry [id]
   (sql/delete! db :books ["id = ?" id]))
 
-(defn pprint-sql
-  [query]
+(defn pprint-sql [query]
   (let [tmp (map (fn [x] (st/replace (str x) #"[{}:\"]" "")) query)]
-    (let [tmp2 (map (fn [x] (st/replace x #"id {1,}[0-9], " "")) tmp)]
-      (st/join "\n" tmp2))))
+    (st/join "\n" tmp))))
   
 
-(defn -main
-  [& args]
+(defn -main [& args]
   (initialize-database)
   (ui/kantaview))
