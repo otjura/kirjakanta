@@ -1,9 +1,8 @@
 (ns kirjakanta.core 
-  (:gen-class)
+  (:gen-class :main true)
   (:require [clojure.java.io :as io]
             [clojure.java.jdbc :as sql]
-            [clojure.string :as st]
-            [kirjakanta.ui :as ui]))
+            [clojure.string :as st]))
 
 (defstruct book :id :title :author :year)
 
@@ -29,8 +28,8 @@
         (println "Luotiin uusi kirjatietokanta."))
     (do (println "Tietokanta on olemassa."))))
 
-(defn query [query]
-  (sql/query db query))
+(defn query [query-string]
+  (sql/query db query-string))
 
 (defn add-entry ; overloaded
   ([title author year]
@@ -45,9 +44,9 @@
 
 (defn edit-entry [id what new-value]
   (case what
-    "title" (sql/update! db :books {:id id :title new-value})
-    "author" (sql/update! db :books {:id id :author new-value})
-    "year" (sql/update! db :books {:id id :year new-value})
+    1 (sql/update! db :books {:title new-value} ["id = ?" id])
+    2 (sql/update! db :books {:author new-value} ["id = ?" id])
+    3 (sql/update! db :books {:year new-value} ["id = ?" id])
     "Ei ole olemassa."))
 
 (defn delete-entry [id]
@@ -55,9 +54,9 @@
 
 (defn pprint-sql [query]
   (let [tmp (map (fn [x] (st/replace (str x) #"[{}:\"]" "")) query)]
-    (st/join "\n" tmp))))
-  
+    (st/join "\n" tmp)))
 
 (defn -main [& args]
   (initialize-database)
-  (ui/kantaview))
+  (kirjakanta.ui/kantaview))
+
