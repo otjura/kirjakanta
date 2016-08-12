@@ -7,7 +7,7 @@
 
 
 (defn kantaview []
-  (declare reset-fields)
+  (declare print-entries add-entry delete-entry edit-entry reset-fields)
   (let [query-button (JButton. "Kysely") ; JButton buttonque = new JButton("Kysely")
                      
         add-button (doto (JButton. "Lisaa")
@@ -19,8 +19,8 @@
         result-label (JLabel. "Tulos:")
         result-field (JTextArea. 20 40) ; row col
         id-field (JTextField. "ID" 40) ; col
-        title-field (JTextField. "NIMI" 40) ; deftxt col
-        author-field (JTextField. "TEKIJA" 40)
+        title-field (JTextField. "OTSIKKO" 40) ; deftxt col
+        author-field (JTextField. "TEKIJÄ" 40)
         year-field (JTextField. "VUOSI" 40)
         view-panel (doto (JPanel.) ; JPanel viewpanel = new JPanel()
                      (.add query-button) ; viewpanel.add(query-button)
@@ -49,28 +49,49 @@
       (let [title (.getText title-field)
             author (.getText author-field)
             year (.getText year-field)]
-        (if-not (and (= title "NIMI") (= author "TEKIJA") (= year "VUOSI"))
-          (core/add-entry title author year)
-          (if-not (and (= title "NIMI") (= author "TEKIJA"))
-            (core/add-entry title author)
-            (if-not (and (= title "NIMI"))
-              (core/add-entry title)
-              (.setText result-field "Anna ainakin kirjan nimi!")))))
-      (reset-fields))
+        (if-not (and (= title "OTSIKKO") (= author "TEKIJÄ") (= year "VUOSI"))
+          (do (core/add-entry title author year)
+              (reset-fields)
+              (print-entries))
+          (if-not (and (= title "OTSIKKO") (= author "TEKIJÄ"))
+            (do (core/add-entry title author)
+                (reset-fields)
+                (print-entries))
+            (if-not (and (= title "OTSIKKO"))
+              (do (core/add-entry title)
+                  (reset-fields)
+                  (print-entries))
+              (.setText result-field "Anna ainakin kirjan nimi!"))))))
       
-
     (defn delete-entry []
       (let [id (.getText id-field)]
-        (core/delete-entry id))
-      (do (reset-fields)
-          (print-entries)))
+        (if-not (= id "ID") 
+          (do (core/delete-entry id)
+              (reset-fields)
+              (print-entries))
+          (.setText result-field "Anna teoksen ID jonka haluat poistaa!"))))
     
     (defn edit-entry []
-      (let [id (.getText id-field)]))
+      (let [id (.getText id-field)
+            title (.getText title-field)
+            author (.getText author-field)
+            year (.getText year-field)]
+        (if (= id "ID")
+          (.setText result-field "Anna ID ja muokkaa haluamiasi kenttiä alla!")
+          (let [info (first (core/get-by-id id))
+                id (str (first info))
+                title (str (first (rest info)))
+                author (str (first (rest (rest info))))
+                year (str (first (rest (rest (rest info)))))] ;seq
+            (do (.setText id-field id) 
+                (.setText title-field title)
+                (.setText author-field author)
+                (.setText year-field year))))))
     
     (defn reset-fields []
-        (do (.setText title-field "NIMI")
-            (.setText author-field "TEKIJA")
+        (do (.setText id-field "ID")
+            (.setText title-field "OTSIKKO")
+            (.setText author-field "TEKIJÄ")
             (.setText year-field "VUOSI")))
 
     ;; queryButton.addActionListener(new ActionListener () {

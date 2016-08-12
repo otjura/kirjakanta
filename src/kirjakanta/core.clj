@@ -12,15 +12,16 @@
          :subname "kirjakanta.db"})
 
 (def books-table (sql/create-table-ddl :books [[:id :integer :primary :key :autoincrement]
-                                         [:title :text]
-                                         [:author :text]
-                                         [:year :text]]))
+                                               [:title :text]
+                                               [:author :text]
+                                               [:year :text]]))
 
 (def allq "SELECT * FROM books")
 (def idsq "SELECT id FROM books")
 (def titlesq "SELECT title FROM books")
 (def authorsq "SELECT author FROM books")
 (def yearsq "SELECT year FROM books")
+(def idgetq "SELECT * FROM books WHERE id=")
 
 (defn initialize-database []
   (if-not (first (map #(.exists (io/as-file %)) '("./kirjakanta.db")))
@@ -38,6 +39,9 @@
    (sql/insert! db :books {:title title :author author}))
   ([title]
    (sql/insert! db :books {:title title})))
+
+(defn get-by-id [id]
+  (query (str idgetq id)))
 
 (defn edit-entry [id what new-value]
   (case what
