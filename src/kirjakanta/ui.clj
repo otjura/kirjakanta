@@ -1,6 +1,7 @@
 (ns kirjakanta.ui
   (:gen-class)
-  (:require [kirjakanta.core :as core])
+  (:require [kirjakanta.db :as db]
+            [clojure.pprint :as pprint])
   (:import [javax.swing JFrame JPanel JLabel JButton JTextField JTextArea]
            [java.awt.event ActionListener]))
 
@@ -58,22 +59,22 @@
         ]
     
     (defn print-entries []
-      (.setText result-field (core/pprint-sql (core/query core/allq))))
+      (.setText result-field (db/pprint-sql (db/query db/allq))))
 
     (defn add-entry []
       (let [title (.getText title-field)
             author (.getText author-field)
             year (.getText year-field)]
         (if-not (and (= title titlestr) (= author authorstr) (= year yearstr))
-          (do (core/add-entry title author year)
+          (do (db/add-entry title author year)
               (reset-fields)
               (print-entries))
           (if-not (and (= title titlestr) (= author authorstr))
-            (do (core/add-entry title author)
+            (do (db/add-entry title author)
                 (reset-fields)
                 (print-entries))
             (if-not (and (= title titlestr))
-              (do (core/add-entry title)
+              (do (db/add-entry title)
                   (reset-fields)
                   (print-entries))
               (.setText result-field "Anna ainakin kirjan nimi!"))))))
@@ -81,7 +82,7 @@
     (defn delete-entry []
       (let [id (.getText id-field)]
         (if-not (= id idstr) 
-          (do (core/delete-entry id)
+          (do (db/delete-entry id)
               (reset-fields)
               (print-entries))
           (.setText result-field "Anna teoksen ID jonka haluat poistaa!"))))
@@ -89,8 +90,8 @@
     (defn edit-entry []
       (let [id (.getText id-field)]
         (if (= id idstr)
-          (.setText result-field (clojure.pprint/cl-format nil "Anna ID ja muokkaa haluamiasi kenttiä alla!~%Muokattuasi tietoja paina Valmis-painiketta tallentaaksesi!"))
-          (let [info (first (core/get-by-id id)); seq podracing
+          (.setText result-field (pprint/cl-format nil "Anna ID ja muokkaa haluamiasi kenttiä alla!~%Muokattuasi tietoja paina Valmis-painiketta tallentaaksesi!"))
+          (let [info (first (db/get-by-id id)); seq podracing
                 id2 (str (first info))
                 title (str (first (rest info)))
                 author (str (first (rest (rest info))))
@@ -104,11 +105,11 @@
              (proxy [ActionListener] []
                (actionPerformed [e] ;TODO FIX gets old values for some reason on second OK
                  (do (if-not (or (= title (.getText title-field)) (= title titlestr))
-                       (core/edit-entry id 1 (.getText title-field)))
+                       (db/edit-entry id 1 (.getText title-field)))
                      (if-not (or (= author (.getText author-field)) (= author authorstr))
-                         (core/edit-entry id 2 (.getText author-field)))
+                         (db/edit-entry id 2 (.getText author-field)))
                      (if-not (or (= year (.getText year-field)) (= year yearstr))
-                       (core/edit-entry id 3 (.getText year-field)))
+                       (db/edit-entry id 3 (.getText year-field)))
                      (reset-fields)
                      (print-entries)))))))))
     
