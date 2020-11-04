@@ -3,8 +3,6 @@
             [clojure.java.jdbc :as sql]
             [clojure.string :as st]))
 
-(defstruct book :id :title :author :year)
-
 (def db {:classname "org.sqlite.JDBC"
          :subprotocol "sqlite"
          :subname "kirjakanta.db"})
@@ -25,7 +23,7 @@
   (if-not (first (map #(.exists (io/as-file %)) '("./kirjakanta.db")))
     (do (sql/execute! db [books-table])
         (println "Luotiin uusi kirjatietokanta."))
-    (do (println "Tietokanta on olemassa."))))
+    (println "Tietokanta on olemassa.")))
 
 (defn query [query-string]
   (sql/query db query-string))

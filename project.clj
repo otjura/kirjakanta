@@ -1,4 +1,4 @@
-(defproject kirjakanta "0.14"
+(defproject kirjakanta "0.15"
   :description "Yksinkertainen kirjatietokanta"
   :url "https://github.com/otjura/kirjakanta"
   :license {:name "The MIT License (MIT)"

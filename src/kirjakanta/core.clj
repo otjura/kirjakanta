@@ -1,8 +1,9 @@
 (ns kirjakanta.core
-  (:require [kirjakanta.ui] [kirjakanta.db])
+  (:require [kirjakanta.ui :as ui]
+            [kirjakanta.db :as db])
   (:gen-class :main true))
 
-(defn -main [& args]
-  (kirjakanta.db/initialize-database)
-  (kirjakanta.ui/kantaview))
+(defn -main []
+  (db/initialize-database)
+  (ui/kantaview))
 

@@ -10,6 +10,6 @@ pom.xml.asc
 .hgignore
 .hg/
 .#*
-#*
 *.*~
 *.db
+.calva/

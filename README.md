@@ -1,4 +1,4 @@
-# Kirjakanta v0.14 (beta)  
+# Kirjakanta  
 
 ## Environment  
 Clojure 1.8.0  
@@ -14,7 +14,6 @@ GNU Emacs 25.0.94.2 (x86_64-w64-mingw32) of 2016-05-26
 Project skeleton made with command 'lein new app kirjakanta'  
 
 ## Usage  
-$ COMPILE with Leiningen in project root: lein uberjar  
-$ RUN: java -jar kirjakanta-0.14-standalone.  
-
-
+From project root:  
+$ COMPILE: lein uberjar  
+$ RUN: java -jar .\target\uberjar\kirjakanta-0.15-standalone  
